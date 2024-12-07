@@ -6,7 +6,6 @@ const { isRole } = require('../middleware/auth');
 
 const router = express.Router();
 
-// Create a new user
 router.post('/add',isAuthenticated,isRole(['ADMIN', 'EMPLOYER']), async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
@@ -31,7 +30,6 @@ router.post('/add',isAuthenticated,isRole(['ADMIN', 'EMPLOYER']), async (req, re
   }
 });
 
-// Read all users
 router.get('/',isAuthenticated,isRole(['ADMIN', 'EMPLOYER']), async (req, res) => {
   try {
     const users = await User.find();
@@ -42,7 +40,6 @@ router.get('/',isAuthenticated,isRole(['ADMIN', 'EMPLOYER']), async (req, res) =
   }
 });
 
-// Read a single user by ID
 router.get('/:id',isAuthenticated,isRole(['ADMIN', 'EMPLOYER']), async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -56,7 +53,6 @@ router.get('/:id',isAuthenticated,isRole(['ADMIN', 'EMPLOYER']), async (req, res
   }
 });
 
-// Update a user by ID
 router.put('/:id',isAuthenticated,isRole(['ADMIN', 'EMPLOYER']), async (req, res) => {
   try {
     const { name, email, password, role } = req.body;

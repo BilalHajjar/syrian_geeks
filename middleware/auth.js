@@ -16,7 +16,6 @@ exports.isAuthenticated = (req, res, next) => {
 };
 exports.isRole = (roles) => {
   return (req, res, next) => {
-    // تحقق إذا كان دور المستخدم موجودًا في المصفوفة
     if (!req.user || !roles.includes(req.user.role)) {
       return res.status(403).json({ error: 'Forbidden: You do not have the required permissions' });
     }
