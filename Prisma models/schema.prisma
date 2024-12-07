@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" 
+  url      = env("DATABASE_URL") 
+}
+
+model User {
+  id           Int       @id @default(autoincrement())
+  email        String    @unique
+  password     String
+  name         String
+  role         Role      @default(JOB_SEEKER)
+  profile      Profile?  // علاقة بـ Profile
+  jobPostings  Job[]     @relation("JobPostings")
+  applications Application[] @relation("UserApplications")
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Profile {
+  id       Int    @id @default(autoincrement())
+  userId   Int    @unique
+  user     User   @relation(fields: [userId], references: [id])
+  skills   String
+  resume   String? // يمكن أن تكون الرابط للسيرة الذاتية
+}
+
+model Job {
+  id             Int           @id @default(autoincrement())
+  title          String
+  description    String
+  location       String
+  salaryRange    String
+  applicationDeadline DateTime
+  employerId     Int
+  employer       User          @relation("JobPostings", fields: [employerId], references: [id])
+  applications   Application[] @relation("JobApplications")
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
+
+model Application {
+  id          Int       @id @default(autoincrement())
+  jobId       Int
+  userId      Int
+  job         Job       @relation("JobApplications", fields: [jobId], references: [id])
+  user        User      @relation("UserApplications", fields: [userId], references: [id])
+  resume      String    // يمكن أن يكون رابط للسيرة الذاتية الخاصة بهذه الوظيفة
+  additionalDetails String?
+  status      ApplicationStatus @default(PENDING)
+  createdAt   DateTime  @default(now())
+}
+
+model Category {
+  id       Int      @id @default(autoincrement())
+  name     String   @unique
+  jobs     Job[]
+}
+
+enum Role {
+  JOB_SEEKER
+  EMPLOYER
+  ADMIN
+}
+
+enum ApplicationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
